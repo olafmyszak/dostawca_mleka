@@ -1,0 +1,3 @@
+D:/Projekty/CLion/aids/dostawca_mleka/cmake-build-debug/CMakeFiles/test.dir
+D:/Projekty/CLion/aids/dostawca_mleka/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/Projekty/CLion/aids/dostawca_mleka/cmake-build-debug/CMakeFiles/rebuild_cache.dir
