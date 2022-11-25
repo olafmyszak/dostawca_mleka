@@ -1,35 +1,48 @@
 #include <iostream>
 #include <map>
-#include <utility>
 #include <vector>
+#include <list>
+#include <queue>
 
 using namespace std;
 
-struct node
+
+using graph = map<int, vector<int>>;
+
+
+int BFS(graph& villages, int src, int dest)
 {
-  bool visited;
-  string name;
+	queue<int> queue;
 
-  explicit node(string name) : visited(false), name(std::move(name))
-  {}
-};
-
-using graph = map<string, vector<node>>;
+	vector<bool> visited(villages.size(), false);
+	vector<int> dist(villages.size());
 
 
-template <typename S>
-ostream& operator<<(ostream& os, const vector<S>& vector)
-{
-	for (const auto& element : vector) {
-		os << element.name << " ";
+	visited[src] = true;
+	dist[src] = 0;
+	queue.push(src);
+
+	while(!queue.empty())
+	{
+		int u = queue.front();
+		queue.pop();
+
+		for(int i=0; i<villages[u].size(); ++i)
+		{
+			if(!visited[villages[u][i]])
+			{
+				visited[villages[u][i]] = true;
+				dist[villages[u][i]] = dist[u] + 1;
+				queue.push(villages[u][i]);
+
+				if(villages[u][i] == dest)
+				{
+					return dist[dest];
+				}
+			}
+		}
+
 	}
-	return os;
-}
-
-int DFS(const string& starting_village, const string& destination, const graph& villages)
-{
-	 villages.at(starting_village);
-
 }
 
 
@@ -40,16 +53,19 @@ int main()
 	cin>>n>>m;
 
 	graph villages;
-	string village_name;
-	vector<string> village_names;
+
+	map<string, int> village_names;
+
 
 	for (int i = 0; i < n; ++i)
 	{
+		string village_name;
 		cin>>village_name;
-		village_names.push_back(village_name);
+
+		village_names[village_name] = i;
 	}
 
-	vector<node> neighbours;
+	vector<int> neighbours;
 
 	for (int i = 0; i < n; ++i)
 	{
@@ -61,22 +77,41 @@ int main()
 
 			if(line != "X")
 			{
-				node neighbour = node(line);
-				neighbours.push_back(neighbour);
+				neighbours.push_back(village_names[line]);
 			}
 			else
 				break;
 		}
 
-		villages[village_names[i]] = neighbours;
+		villages[i] = neighbours;
 		neighbours.clear();
 	}
 
-	for(const auto& elem : villages)
-	{
-		std::cout << elem.first << " " << elem.second << "\n";
+	string src;
+	cin>>src;
 
+	vector<string> dest(m);
+
+	for(int i=0; i<m; ++i)
+	{
+		string line;
+		cin>>line;
+		dest[i] = line;
 	}
+
+	int max_dist = BFS(villages, village_names[src], village_names[dest[0]]);
+
+	for(int i = 1; i<m; ++i)
+	{
+		int dist = BFS(villages, village_names[src], village_names[dest[i]]);
+
+		if(dist > max_dist)
+		{
+			max_dist = dist;
+		}
+	}
+
+	cout<<max_dist;
 
 	return 0;
 }
