@@ -1,22 +1,19 @@
 #include <iostream>
 #include <map>
 #include <vector>
-#include <list>
 #include <queue>
 
 using namespace std;
 
-
 using graph = map<int, vector<int>>;
-
 
 int BFS(graph& villages, int src, int dest)
 {
 	queue<int> queue;
+	size_t size = villages.size();
 
-	vector<bool> visited(villages.size(), false);
-	vector<int> dist(villages.size());
-
+	vector<bool> visited(size, false);
+	vector<int> dist(size);
 
 	visited[src] = true;
 	dist[src] = 0;
@@ -27,27 +24,35 @@ int BFS(graph& villages, int src, int dest)
 		int u = queue.front();
 		queue.pop();
 
-		for(int i=0; i<villages[u].size(); ++i)
-		{
-			if(!visited[villages[u][i]])
-			{
-				visited[villages[u][i]] = true;
-				dist[villages[u][i]] = dist[u] + 1;
-				queue.push(villages[u][i]);
+		size = villages[u].size();
 
-				if(villages[u][i] == dest)
+		for(int i=0; i<size; ++i)
+		{
+			int curr = villages[u][i];
+			if(!visited[curr])
+			{
+				visited[curr] = true;
+				dist[curr] = dist[u] + 1;
+				queue.push(curr);
+
+				if(curr == dest)
 				{
-					return dist[dest];
+					return dist[curr];
 				}
 			}
 		}
 
 	}
-}
 
+	return 0;
+}
 
 int main()
 {
+	std::ios_base::sync_with_stdio(false);
+	std::cout.tie(nullptr);
+	std::cin.tie(nullptr);
+
 	unsigned int n, m;
 
 	cin>>n>>m;
