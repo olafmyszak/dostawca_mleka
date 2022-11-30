@@ -6,17 +6,17 @@
 
 using namespace std;
 
-using graph = unordered_map<int, vector<int>>;
+using graph = unordered_map<unsigned int, vector<unsigned int>>;
 
-int BFS(graph& villages, int src, const vector<int>& dest)
+int BFS(graph& villages, unsigned int src, const vector<unsigned int>& dest)
 {
-	queue<int> queue;
+	queue<unsigned int> queue;
 	size_t size = villages.size();
 
 	vector<bool> visited(size, false);
 	vector<int> dist(size);
-	int *dist_to_dest = new int [dest.size()];
-	int counter = 0;
+	vector<int> dist_to_dest (dest.size());
+	unsigned int counter{0};
 
 	visited[src] = true;
 	dist[src] = 0;
@@ -24,14 +24,15 @@ int BFS(graph& villages, int src, const vector<int>& dest)
 
 	while(!queue.empty())
 	{
-		int u = queue.front();
+		unsigned int const u = queue.front();
 		queue.pop();
 
 		size = villages[u].size();
 
-		for(int i=0; i<size; ++i)
+		for(unsigned int i=0; i<size; ++i)
 		{
-			int curr = villages[u][i];
+			unsigned int const curr = villages[u][i];
+
 			if(!visited[curr])
 			{
 				visited[curr] = true;
@@ -45,15 +46,9 @@ int BFS(graph& villages, int src, const vector<int>& dest)
 				}
 			}
 		}
-
 	}
-	int *max_el = max_element(dist_to_dest, dist_to_dest+dest.size());
 
-	int max = *max_el;
-
-	delete [] dist_to_dest;
-
-	return max;
+	return *max_element(dist_to_dest.begin(), dist_to_dest.end());
 }
 
 int main()
@@ -62,15 +57,15 @@ int main()
 	std::cout.tie(nullptr);
 	std::cin.tie(nullptr);
 
-	unsigned int n, m;
+	unsigned int n{}, m{};
 
 	cin>>n>>m;
 
 	graph villages;
 
-	unordered_map<string, int> village_names;
+	unordered_map<string, unsigned int> village_names;
 
-	for (int i = 0; i < n; ++i)
+	for (unsigned int i = 0; i < n; ++i)
 	{
 		string village_name;
 		cin>>village_name;
@@ -78,9 +73,9 @@ int main()
 		village_names[village_name] = i;
 	}
 
-	vector<int> neighbours;
+	vector<unsigned int> neighbours;
 
-	for (int i = 0; i < n; ++i)
+	for (unsigned int i = 0; i < n; ++i)
 	{
 		string line;
 
@@ -103,7 +98,7 @@ int main()
 	string src;
 	cin>>src;
 
-	vector<int> dest(m);
+	vector<unsigned int> dest(m);
 
 	for(unsigned int i=0; i<m; ++i)
 	{
@@ -112,7 +107,7 @@ int main()
 		dest[i] = village_names[line];
 	}
 
-	int max_dist = BFS(villages, village_names[src], dest);
+	int const max_dist = BFS(villages, village_names[src], dest);
 
 	cout<<max_dist;
 
