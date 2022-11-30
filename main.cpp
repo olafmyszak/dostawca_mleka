@@ -1,19 +1,22 @@
 #include <iostream>
-#include <map>
 #include <vector>
 #include <queue>
+#include <unordered_map>
+#include <algorithm>
 
 using namespace std;
 
-using graph = map<int, vector<int>>;
+using graph = unordered_map<int, vector<int>>;
 
-int BFS(graph& villages, int src, int dest)
+int BFS(graph& villages, int src, const vector<int>& dest)
 {
 	queue<int> queue;
 	size_t size = villages.size();
 
 	vector<bool> visited(size, false);
 	vector<int> dist(size);
+	int *dist_to_dest = new int [dest.size()];
+	int counter = 0;
 
 	visited[src] = true;
 	dist[src] = 0;
@@ -35,16 +38,22 @@ int BFS(graph& villages, int src, int dest)
 				dist[curr] = dist[u] + 1;
 				queue.push(curr);
 
-				if(curr == dest)
+				if(curr == dest[counter])
 				{
-					return dist[curr];
+					dist_to_dest[counter] = dist[curr];
+					++counter;
 				}
 			}
 		}
 
 	}
+	int *max_el = max_element(dist_to_dest, dist_to_dest+dest.size());
 
-	return 0;
+	int max = *max_el;
+
+	delete [] dist_to_dest;
+
+	return max;
 }
 
 int main()
@@ -59,8 +68,7 @@ int main()
 
 	graph villages;
 
-	map<string, int> village_names;
-
+	unordered_map<string, int> village_names;
 
 	for (int i = 0; i < n; ++i)
 	{
@@ -95,26 +103,16 @@ int main()
 	string src;
 	cin>>src;
 
-	vector<string> dest(m);
+	vector<int> dest(m);
 
-	for(int i=0; i<m; ++i)
+	for(unsigned int i=0; i<m; ++i)
 	{
 		string line;
 		cin>>line;
-		dest[i] = line;
+		dest[i] = village_names[line];
 	}
 
-	int max_dist = BFS(villages, village_names[src], village_names[dest[0]]);
-
-	for(int i = 1; i<m; ++i)
-	{
-		int dist = BFS(villages, village_names[src], village_names[dest[i]]);
-
-		if(dist > max_dist)
-		{
-			max_dist = dist;
-		}
-	}
+	int max_dist = BFS(villages, village_names[src], dest);
 
 	cout<<max_dist;
 
